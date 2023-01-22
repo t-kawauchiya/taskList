@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task management app</title>
+    <link th:href="@{home.css}" rel="stylesheet"/>
+</head>
+<body>
+<h1>Task management app</h1>
+<div class="task_form">
+    <h2>add task</h2>
+    <form action="/add">
+        <label>Task</label>
+        <input name="task" type="text"/>
+        <label>Deadline</label>
+        <input name="deadline" type="date"/>
+        <input type="submit" value="add">
+    </form>
+</div>
+<div class="taskList">
+    <h2>current taskList</h2>
+    <table border="1" style="border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th class="hidden">ID</th>
+            <th>task</th>
+            <th width="150px">deadline</th>
+            <th width="100px">state</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${taskList}">
+            <td class="hidden" th:text="${task.id}"></td>
+            <td th:text="${task.task}"></td>
+            <td width="100px" th:text="${task.deadline}"></td>
+            <td width="50px" th:text="${task.done} ? 'done':'undone'"></td>
+            <td width="50px">
+                <form action="/delete">
+                    <button type="submit" id="delete_button">delete</button>
+                    <input type="hidden" name="id" th:value="${task.id}">
+                </form>
+            </td>
+            <td width="50px">
+                <button type="submit" id="update_button" onclick="
+                    let row= this.parentElement.parentElement;
+                    getElementById('update_id').value=row.cells[0].firstChild.data;
+                    getElementById('update_task').value=row.cells[1].firstChild.data;
+                    getElementById('update_deadline').value=row.cells[2].firstChild.data;
+                    getElementById('update_status').selectedIndex=(row.cells[3].firstChild.data=='done')?1:0;
+                    var dialog = getElementById('updateDialog');
+                    dialog.style.display = 'block';
+                    ">update</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div id="updateDialog">
+    <div class="task_form">
+        <h2>update task</h2>
+        <form action="/update">
+            <input id="update_id" name="id" type="hidden"/>
+            <label>task</label>
+            <input id="update_task" name="task" type="text"/>
+            <label>deadline</label>
+            <input id="update_deadline" name="deadline" type="date"/>
+            <label>state</label>
+            <select id="update_status" name="done">
+                <option value="false">undone</option>
+                <option value="true">done</option>
+            </select>
+            <div>
+                <button type="submit">update</button>
+                <button type="reset" onclick="getElementById('updateDialog').style.display='none'">
+                    cansel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
